@@ -1,0 +1,368 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Better Products - StyleFeedback</title>
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-info h3 {
+            font-size: 1.2rem;
+            color: #e91e63;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-info p {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        @media (max-width: 480px) {
+            .product-card img {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html">StyleFeedback</a></h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="survey.html" class="nav-link">Survey</a>
+                <a href="feedback.html" class="nav-link">Feedback</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="form-title">Our Improved Products</h2>
+                <p class="form-subtitle">Thanks to your feedback, we’ve made upgrades to our collections:</p>
+
+                <div class="product-grid">
+                    <div class="product-card">
+                        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80" alt="Shirt">
+                        <div class="product-info">
+                            <h3>Premium Shirts</h3>
+                            <p>Crafted with breathable, high-thread cotton for all-day comfort.</p>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <img src="https://images.unsplash.com/photo-1618354691322-f80e90309b42?auto=format&fit=crop&w=800&q=80" alt="Pants">
+                        <div class="product-info">
+                            <h3>Tailored Pants</h3>
+                            <p>Redesigned for better fit and flexibility across all sizes.</p>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <img src="https://images.unsplash.com/photo-1602810318019-cf9e6b9d08f3?auto=format&fit=crop&w=800&q=80" alt="Jacket">
+                        <div class="product-info">
+                            <h3>Smart Jackets</h3>
+                            <p>Lightweight, water-resistant jackets perfect for all seasons.</p>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <img src="https://images.unsplash.com/photo-1619983081563-430f4b05f379?auto=format&fit=crop&w=800&q=80" alt="Accessories">
+                        <div class="product-info">
+                            <h3>Stylish Accessories</h3>
+                            <p>Sustainable, fashion-forward accessories made just for you.</p>
+                        </div>
+                    </div>
+
+                    <div class="product-card">
+                        <img src="https://images.unsplash.com/photo-1602810318484-2b5d1457dc09?auto=format&fit=crop&w=800&q=80" alt="Dresses">
+                        <div class="product-info">
+                            <h3>Elegant Dresses</h3>
+                            <p>Designed with flowing fabrics and trending patterns.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 StyleFeedback. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Better Products - StyleFeedback</title>
+  <link href="css/style.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header, .footer {
+      background: #fff;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    .nav {
+      margin-top: 10px;
+    }
+
+    .nav-link {
+      margin: 0 10px;
+      text-decoration: none;
+      color: #e91e63;
+    }
+
+    .form-title {
+      font-size: 2rem;
+      color: #333;
+    }
+
+    .form-subtitle {
+      color: #666;
+      margin-bottom: 1rem;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .product-card {
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .slider {
+      
+      position: relative;
+  overflow: hidden;
+  height: 300px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+    }
+
+    .slides {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+      /* width: 400%; */
+      height: 100%;
+    }
+
+    .slides img {
+      width: 100%;
+        height: 100%;
+      object-fit: cover;
+      /* height: 250px; */
+      flex-shrink: 0;
+    }
+    .slider button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  cursor: pointer;
+  padding: 5px 10px;
+  z-index: 1;
+  font-size: 18px;
+  border-radius: 4px;
+}
+
+.slider .prev {
+  left: 10px;
+}
+
+.slider .next {
+  right: 10px;
+}
+
+  
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1><a href="index.html" style="text-decoration: none; margin-left: 0;">StyleFeedback</a></h1>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="survey.html" class="nav-link">Survey</a>
+        <a href="feedback.html" class="nav-link">Feedback</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <h2 class="form-title">Our Improved Products</h2>
+      <p class="form-subtitle">Thanks to your feedback, we’ve made upgrades to our collections:</p>
+
+      <div class="product-grid">
+
+        <!-- Tailored Pants -->
+        <div class="product-card">
+          <div class="slider">
+            <div class="slides">
+              <img src="Images/Pant1.webp" alt="Pants 1" />
+              <img src="Images/Pant 2.webp" alt="Pants 2" />
+              <img src="Images/Pant 3.webp" alt="Pants 3" />
+            </div>
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+          </div>
+          <div class="product-info">
+            <h3>Tailored Pants</h3>
+            <p>Redesigned for better fit and flexibility across all sizes.</p>
+          </div>
+        </div>
+
+        <!-- Smart Jackets -->
+        <div class="product-card">
+          <div class="slider">
+            <div class="slides">
+              <img src="Images/jacket 1.jpg" alt="Jacket 1" />
+              <img src="Images/jacket 2.jpg" alt="Jacket 2" />
+              <img src="Images/jacket 3.jpg" alt="Jacket 3" />
+            </div>
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+          </div>
+          <div class="product-info">
+            <h3>Smart Jackets</h3>
+            <p>Lightweight, water-resistant jackets perfect for all seasons.</p>
+          </div>
+        </div>
+
+        <!-- Stylish Accessories -->
+        <div class="product-card">
+          <div class="slider">
+            <div class="slides">
+              <img src="Images/jewel 1.avif" alt="Accessory 1" />
+              <img src="Images/jewel 2.jpg" alt="Accessory 2" />
+              <img src="Images/jewel 3.jpg" alt="Accessory 3" />
+            </div>
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+          </div>
+          <div class="product-info">
+            <h3>Stylish Accessories</h3>
+            <p>Sustainable, fashion-forward accessories made just for you.</p>
+          </div>
+        </div>
+
+        <!-- Elegant Dresses -->
+        <div class="product-card">
+          <div class="slider">
+            <div class="slides">
+              <img src="Images/dress 1.webp" alt="Dress 1" />
+              <img src="Images/dress 2.avif" alt="Dress 2" />
+              <img src="Images/dress 3.webp" alt="Dress 3" />
+            </div>
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+          </div>
+          <div class="product-info">
+            <h3>Elegant Dresses</h3>
+            <p>Designed with flowing fabrics and trending patterns.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 StyleFeedback. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const sliders = document.querySelectorAll(".slider");
+
+    sliders.forEach((slider) => {
+      const slides = slider.querySelector(".slides");
+      const images = slides.querySelectorAll("img");
+      const prev = slider.querySelector(".prev");
+      const next = slider.querySelector(".next");
+
+      let currentIndex = 0;
+
+      function updateSlide() {
+        slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+      }
+
+      next.addEventListener("click", () => {
+        currentIndex = (currentIndex + 1) % images.length;
+        updateSlide();
+      });
+
+      prev.addEventListener("click", () => {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        updateSlide();
+      });
+
+      updateSlide();
+    });
+  });
+</script>
+
+
+</body>
+</html>

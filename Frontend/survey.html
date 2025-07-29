@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style Survey - StyleFeedback</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1><a href="index.html">StyleFeedback</a></h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="feedback.html" class="nav-link">Feedback</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="form-container">
+                <h2 class="form-title">Style Preferences Survey</h2>
+                <p class="form-subtitle">Help us understand your fashion preferences</p>
+                
+                <form id="surveyForm" class="survey-form">
+                    <div class="form-group">
+                        <label for="surveyName">Full Name *</label>
+                        <input type="text" id="surveyName" name="name" required>
+                        <span class="error-message" id="surveyNameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="surveyEmail">Email Address *</label>
+                        <input type="email" id="surveyEmail" name="email" required>
+                        <span class="error-message" id="surveyEmailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="age">Age Group</label>
+                        <select id="age" name="age">
+                            <option value="">Select age group</option>
+                            <option value="18-25">18-25</option>
+                            <option value="26-35">26-35</option>
+                            <option value="36-45">36-45</option>
+                            <option value="46-55">46-55</option>
+                            <option value="55+">55+</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Preferred Style *</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="style" value="casual"> Casual</label>
+                            <label><input type="checkbox" name="style" value="formal"> Formal</label>
+                            <label><input type="checkbox" name="style" value="sporty"> Sporty</label>
+                            <label><input type="checkbox" name="style" value="vintage"> Vintage</label>
+                            <label><input type="checkbox" name="style" value="trendy"> Trendy</label>
+                        </div>
+                        <span class="error-message" id="styleError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Favorite Colors</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="colors" value="black"> Black</label>
+                            <label><input type="checkbox" name="colors" value="white"> White</label>
+                            <label><input type="checkbox" name="colors" value="blue"> Blue</label>
+                            <label><input type="checkbox" name="colors" value="red"> Red</label>
+                            <label><input type="checkbox" name="colors" value="pink"> Pink</label>
+                            <label><input type="checkbox" name="colors" value="green"> Green</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="budget">Monthly Clothing Budget</label>
+                        <select id="budget" name="budget">
+                            <option value="">Select budget range</option>
+                            <option value="under-50">Under $50</option>
+                            <option value="50-100">$50 - $100</option>
+                            <option value="100-200">$100 - $200</option>
+                            <option value="200-500">$200 - $500</option>
+                            <option value="over-500">Over $500</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shopping">How often do you shop for clothes?</label>
+                        <select id="shopping" name="shoppingFrequency">
+                            <option value="">Select frequency</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="quarterly">Quarterly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="suggestions">Suggestions for Improvement</label>
+                        <textarea id="suggestions" name="suggestions" rows="4" placeholder="Any suggestions for our clothing collection?"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full">Submit Survey</button>
+                </form>
+
+                <div id="surveySuccessMessage" class="success-message" style="display: none;">
+                    <h3>Thank you for participating!</h3>
+                    <p>Your responses help us create better fashion experiences.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/survey.js"></script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,138 @@
+<!-- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - StyleFeedback</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="css/style.css" rel="stylesheet"/>
+  
+
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <h1><a href="index.html">StyleFeedback</a></h1>
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+
+         <span class="nav-link admin-badge">Admin Panel</span> 
+
+      
+
+        </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="admin-container">
+        <h2 class="form-title">Admin Dashboard</h2>
+
+        
+        <div class="admin-tabs">
+          <button class="tab-btn active" onclick="showTab('feedback')">Feedbacks</button>
+          <button class="tab-btn" onclick="showTab('survey')">Surveys</button>
+        </div>
+
+      
+        <div id="feedbackTab" class="tab-content active">
+          <div class="section-header">
+            <h3>Customer Feedbacks</h3>
+            <button class="btn btn-secondary" onclick="loadFeedbacks()">Refresh</button>
+          </div>
+          <div id="feedbackList" class="data-list">
+            <div class="loading">Loading feedbacks...</div>
+          </div>
+        </div>
+
+      
+        <div id="surveyTab" class="tab-content">
+          <div class="section-header">
+            <h3>Survey Responses</h3>
+            <button class="btn btn-secondary" onclick="loadSurveys()">Refresh</button>
+          </div>
+          <div id="surveyList" class="data-list">
+            <div class="loading">Loading surveys...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
+ -->
+
+
+
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - StyleFeedback</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="css/style.css" rel="stylesheet"/>
+
+  <script>
+    if (!localStorage.getItem("isAdminLoggedIn")) {
+      window.location.href = "admin-login.html";
+    }
+  </script>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <h1><a href="index.html">StyleFeedback</a></h1>
+      </div>
+      <nav class="nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <button onclick="logout()" class="btn btn-secondary">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="admin-container">
+        <h2 class="form-title">Admin Dashboard</h2>
+
+        <div class="admin-tabs">
+          <button class="tab-btn active" onclick="showTab('feedback')">Feedbacks</button>
+          <button class="tab-btn" onclick="showTab('survey')">Surveys</button>
+        </div>
+
+        <div id="feedbackTab" class="tab-content active">
+          <div class="section-header">
+            <h3>Customer Feedbacks</h3>
+            <button class="btn btn-secondary" onclick="loadFeedbacks()">Refresh</button>
+          </div>
+          <div id="feedbackList" class="data-list">
+            <div class="loading">Loading feedbacks...</div>
+          </div>
+        </div>
+
+        <div id="surveyTab" class="tab-content">
+          <div class="section-header">
+            <h3>Survey Responses</h3>
+            <button class="btn btn-secondary" onclick="loadSurveys()">Refresh</button>
+          </div>
+          <div id="surveyList" class="data-list">
+            <div class="loading">Loading surveys...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

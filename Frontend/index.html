@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StyleFeedback - Your Fashion Voice</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+  <script>
+    if (!localStorage.getItem("isLoggedIn")) {
+      window.location.href = "login.html";
+    }
+  </script>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <h1><a href="index.html" style="text-decoration: none; color: inherit;">StyleFeedback</a></h1>
+      </div>
+      <nav class="nav">
+        <a href="#home" class="nav-link">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#contact" class="nav-link">Contact</a>
+       <a href="admin.html" class="nav-link admin-link">Admin</a>
+      
+
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="container">
+      <div class="hero-content">
+        <h2 class="hero-title">Share Your Fashion Experience</h2>
+        <p class="hero-subtitle">
+          Help us improve our clothing collection with your valuable feedback and style preferences
+        </p>
+        <div class="hero-buttons">
+          <a href="feedback.html" class="btn btn-primary">Give Feedback</a>
+          <a href="survey.html" class="btn btn-secondary">Take Survey</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <div class="feedback-quote">"Feedback is the breakfast of champions." – Ken Blanchard</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="about">
+    <div class="container">
+      <h2 class="section-title">Why Your Opinion Matters</h2>
+      <div class="features-grid">
+
+        <a href="feedback.html" class="feature-card">
+          <div class="feature-icon">💬</div>
+          <h3>Share Feedback</h3>
+          <p>Tell us about your experience with our clothing products</p>
+        </a>
+
+        <a href="survey.html" class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Style Survey</h3>
+          <p>Help us understand your fashion preferences and style choices</p>
+        </a>
+
+        <a href="product.html" class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Better Products</h3>
+          <p>See how we’ve improved our collections based on your feedback</p>
+        </a>
+
+      </div>
+    </div>
+  </section>
+  <!-- Contact Section -->
+<section class="contact" id="contact">
+  <div class="container">
+    <h2 class="section-title">Contact Us</h2>
+    <p class="contact-description">Have questions or suggestions? Reach out to us anytime.</p>
+    <div class="contact-grid">
+      <div class="contact-item">
+        <h3>Email</h3>
+        <p><a href="mailto:support@stylefeedback.com">support@stylefeedback.com</a></p>
+      </div>
+      <div class="contact-item">
+        <h3>Phone</h3>
+        <p>+91 98765 43210</p>
+      </div>
+      <div class="contact-item">
+        <h3>Address</h3>
+        <p>Fashion Street, Mumbai, Maharashtra, India</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- Footer -->
+  <!-- <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 StyleFeedback. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html> -->
+<!-- Footer -->
+<footer class="footer">
+  <div class="container footer-container">
+    <div class="footer-brand">
+      <h2>StyleFeedback</h2>
+      <p>Your voice in fashion. Help us shape better clothing experiences.</p>
+    </div>
+
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+        <li><a href="feedback.html">Feedback</a></li>
+        <li><a href="survey.html">Survey</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-social">
+      <h4>Connect</h4>
+      <div class="social-icons">
+        <a href="#"><span>🌐</span></a>
+        <a href="#"><span>📘</span></a>
+        <a href="#"><span>📸</span></a>
+        <a href="#"><span>📌</span></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2024 StyleFeedback. All rights reserved.</p>
+  </div>
+</footer>
+
