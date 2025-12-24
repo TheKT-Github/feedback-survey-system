@@ -16,8 +16,6 @@ A web-based application for collecting and managing user feedback and survey res
 
 ## 📁 Project Structure
 
-## 📁 Project Structure
-
 ```bash
 feedback-survey-system/
 │
