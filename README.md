@@ -1,4 +1,3 @@
-<img width="1446" height="750" alt="image" src="https://github.com/user-attachments/assets/bc920d04-21ac-4b90-b3d9-434c2d8c7c22" /># Feedback & Survey Management System
 
 A web-based application for collecting and managing user feedback and survey responses. Built using **HTML**, **CSS**, **JavaScript**, **Node.js**, and **MongoDB**.
 
