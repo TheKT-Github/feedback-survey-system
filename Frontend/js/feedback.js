@@ -91,31 +91,72 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (!validateForm()) return;
 
-    const formData = {
-      name: document.getElementById('name').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      product: document.getElementById('product').value,
-      rating: parseInt(ratingInput.value),
-      feedback: document.getElementById('feedback').value.trim(),  // ✅ match backend field name
-      recommend: document.getElementById('recommend').checked,
-      submittedAt: new Date().toISOString()
-    };
+    const photoInput = document.getElementById('photo');
+    const hasPhoto = photoInput && photoInput.files && photoInput.files.length > 0;
+
+    // Validate photo size and type if selected
+    if (hasPhoto) {
+      const file = photoInput.files[0];
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!validTypes.includes(file.type.toLowerCase())) {
+        alert('Invalid image format. Only JPEG, PNG, and WEBP images are allowed.');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image is too large. Maximum allowed size is 5 MB.');
+        return;
+      }
+    }
+
+    const payload = new FormData();
+    payload.append('name', document.getElementById('name').value.trim());
+    payload.append('email', document.getElementById('email').value.trim());
+    payload.append('product', document.getElementById('product').value);
+    payload.append('rating', ratingInput.value);
+    payload.append('feedback', document.getElementById('feedback').value.trim());
+    payload.append('recommend', document.getElementById('recommend').checked);
+    payload.append('submittedAt', new Date().toISOString());
+
+    if (hasPhoto) {
+      payload.append('photo', photoInput.files[0]);
+    }
+
+    const API_BASE = (window.location.protocol.startsWith('http') && (window.location.port === '3000' || !window.location.port)) ? '' : 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const headers = {};
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     try {
-      const response = await fetch('http://localhost:3000/api/feedback' ,{
+      const response = await fetch(`${API_BASE}/api/feedback`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        headers,
+        body: payload
       });
 
-      if (response.ok) {
-        feedbackForm.style.display = 'none';
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        feedbackForm.reset();
+        currentRating = 0;
+        updateStarDisplay();
+        const preview = document.getElementById("photoPreview");
+        if (preview) preview.innerHTML = "";
+
         successMessage.style.display = 'block';
+        successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Automatically refresh customer reviews below to show the new submission
+        if (typeof window.loadPublicFeedbacks === 'function') {
+          window.loadPublicFeedbacks(1);
+        }
+
         setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 3000);
+          successMessage.style.display = 'none';
+        }, 5000);
       } else {
-        throw new Error('Failed to submit feedback');
+        alert(data.error || data.message || 'Failed to submit feedback');
       }
     } catch (error) {
       alert('Sorry, there was an error submitting your feedback. Please try again.');

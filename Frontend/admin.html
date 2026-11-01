@@ -1,90 +1,147 @@
-<!-- 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin Panel - StyleFeedback</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
   <link href="css/style.css" rel="stylesheet"/>
-  
+  <!-- Chart.js (lightweight CDN, pinned minor version for stability) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
-</head>
-<body>
-  <header class="header">
-    <div class="container">
-      <div class="logo">
-        <h1><a href="index.html">StyleFeedback</a></h1>
-      </div>
-      <nav class="nav">
-        <a href="index.html" class="nav-link">Home</a>
+  <style>
+    /* ── Analytics Tab Styles ─────────────────────────────────────── */
+    .analytics-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .analytics-card {
+      border-radius: 12px;
+      padding: 20px 16px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      transition: transform .15s;
+    }
+    .analytics-card:hover { transform: translateY(-2px); }
+    .analytics-card__icon { font-size: 1.8rem; margin-bottom: 6px; }
+    .analytics-card__value { font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }
+    .analytics-card__label { font-size: 0.78rem; opacity: .8; font-weight: 500; }
+    .analytics-card--blue   { background:#e3f2fd; color:#1565c0; }
+    .analytics-card--gold   { background:#fff8e1; color:#e65100; }
+    .analytics-card--green  { background:#e8f5e9; color:#2e7d32; }
+    .analytics-card--red    { background:#ffebee; color:#c62828; }
+    .analytics-card--grey   { background:#f5f5f5; color:#424242; }
+    .analytics-card--purple { background:#f3e5f5; color:#6a1b9a; }
+    .analytics-card--orange { background:#fff3e0; color:#bf360c; }
+    .analytics-card--teal   { background:#e0f2f1; color:#00695c; }
 
-         <span class="nav-link admin-badge">Admin Panel</span> 
+    .analytics-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 22px 20px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.07);
+    }
+    .analytics-section h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #2c2c2c;
+      border-left: 4px solid #e91e63;
+      padding-left: 10px;
+    }
 
-      
+    .analytics-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 700px) { .analytics-two-col { grid-template-columns: 1fr; } }
 
-        </nav>
-    </div>
-  </header>
+    .analytics-chart-box {
+      background:#fff;
+      border-radius:10px;
+      padding:16px;
+      box-shadow:0 1px 6px rgba(0,0,0,.07);
+      max-height: 340px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .analytics-chart-box canvas { max-height: 300px; }
 
-  <main class="main-content">
-    <div class="container">
-      <div class="admin-container">
-        <h2 class="form-title">Admin Dashboard</h2>
+    .analytics-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      background: #fff;
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 22px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+    }
+    .analytics-filters label { font-size: .82rem; font-weight: 600; color: #555; }
+    .analytics-filters select {
+      padding: 7px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: .85rem;
+      background: #fafafa;
+      cursor: pointer;
+    }
+    .analytics-filters button {
+      padding: 7px 18px;
+      background: #e91e63;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .analytics-filters button:hover { background: #c2185b; }
 
-        
-        <div class="admin-tabs">
-          <button class="tab-btn active" onclick="showTab('feedback')">Feedbacks</button>
-          <button class="tab-btn" onclick="showTab('survey')">Surveys</button>
-        </div>
+    .aspect-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: .88rem;
+    }
+    .aspect-item--positive { background: #e8f5e9; }
+    .aspect-item--negative { background: #ffebee; }
+    .aspect-rank { font-weight: 700; width: 20px; text-align: center; opacity: .6; }
+    .aspect-name { font-weight: 600; flex: 1; }
+    .aspect-stat { font-size: .78rem; opacity: .75; }
 
-      
-        <div id="feedbackTab" class="tab-content active">
-          <div class="section-header">
-            <h3>Customer Feedbacks</h3>
-            <button class="btn btn-secondary" onclick="loadFeedbacks()">Refresh</button>
-          </div>
-          <div id="feedbackList" class="data-list">
-            <div class="loading">Loading feedbacks...</div>
-          </div>
-        </div>
+    .analytics-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .analytics-table th { background:#f5f5f5; padding:10px 12px; text-align:left; font-weight:600; }
+    .analytics-table td { padding:10px 12px; border-bottom:1px solid #f0f0f0; }
+    .analytics-table tr:hover td { background:#fafafa; }
 
-      
-        <div id="surveyTab" class="tab-content">
-          <div class="section-header">
-            <h3>Survey Responses</h3>
-            <button class="btn btn-secondary" onclick="loadSurveys()">Refresh</button>
-          </div>
-          <div id="surveyList" class="data-list">
-            <div class="loading">Loading surveys...</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-
-  <script src="js/admin.js"></script>
-</body>
-</html>
- -->
-
-
-
- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Admin Panel - StyleFeedback</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
-  <link href="css/style.css" rel="stylesheet"/>
+    .analytics-empty { text-align: center; color: #aaa; padding: 30px; font-size: .9rem; }
+    .analytics-loading { text-align: center; color: #888; padding: 20px; }
+    .analytics-error { text-align: center; color: #c62828; padding: 20px; font-weight: 600; }
+    #analyticsStatus { margin-bottom: 12px; }
+  </style>
 
   <script>
-    if (!localStorage.getItem("isAdminLoggedIn")) {
-      window.location.href = "admin-login.html";
-    }
+    (function() {
+      const adminToken = localStorage.getItem("adminToken");
+      const adminUser = JSON.parse(localStorage.getItem("adminUser") || "null");
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      const isAdmin = (adminToken && (adminUser?.role === 'admin' || localStorage.getItem("isAdminLoggedIn") === "true")) || (user && user.role === 'admin');
+      
+      if (!isAdmin) {
+        window.location.replace("admin-login.html");
+      }
+    })();
   </script>
 </head>
 <body>
@@ -95,6 +152,8 @@
       </div>
       <nav class="nav">
         <a href="index.html" class="nav-link">Home</a>
+        <a href="admin.html" class="nav-link active">Admin Panel</a>
+        <a href="admin-ai.html" class="nav-link">✨ AI Insights</a>
         <button onclick="logout()" class="btn btn-secondary">Logout</button>
       </nav>
     </div>
@@ -108,18 +167,115 @@
         <div class="admin-tabs">
           <button class="tab-btn active" onclick="showTab('feedback')">Feedbacks</button>
           <button class="tab-btn" onclick="showTab('survey')">Surveys</button>
+          <button class="tab-btn" onclick="showTab('moderation')">Flagged Feedback</button>
+          <button class="tab-btn" onclick="showTab('analytics')">📊 Analytics</button>
+          <button class="tab-btn" onclick="showTab('ai')">🤖 AI Insights</button>
         </div>
 
+        <!-- ── Feedbacks Tab ───────────────────────────────────────── -->
         <div id="feedbackTab" class="tab-content active">
           <div class="section-header">
-            <h3>Customer Feedbacks</h3>
+            <h3>Customer Feedbacks &amp; Intelligence Search</h3>
             <button class="btn btn-secondary" onclick="loadFeedbacks()">Refresh</button>
           </div>
+
+          <!-- Admin Search & Filter Controls -->
+          <div class="analytics-filters" style="margin-bottom: 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:flex-end;">
+            <div style="flex:1; min-width:180px;">
+              <label for="adminSearchInput" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Keyword</label>
+              <input type="text" id="adminSearchInput" placeholder="Search feedback text, product, user..." 
+                     style="width:100%; padding:7px 10px; border:1px solid #ddd; border-radius:6px; font-size:0.85rem; box-sizing:border-box;" />
+            </div>
+
+            <div>
+              <label for="adminStatusFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Status</label>
+              <select id="adminStatusFilter" onchange="applyAdminFilters()">
+                <option value="all">All Statuses</option>
+                <option value="published">Published</option>
+                <option value="approved">Approved</option>
+                <option value="flagged">Flagged</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="adminProductFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Product</label>
+              <select id="adminProductFilter" onchange="applyAdminFilters()">
+                <option value="all">All Products</option>
+                <option value="tops">Tops</option>
+                <option value="jeans">Jeans</option>
+                <option value="dress">Dress</option>
+                <option value="jacket">Jacket</option>
+                <option value="shoes">Shoes</option>
+                <option value="accessories">Accessories</option>
+                <option value="general">General</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="adminSentimentFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Sentiment</label>
+              <select id="adminSentimentFilter" onchange="applyAdminFilters()">
+                <option value="all">All Sentiments</option>
+                <option value="Positive">Positive</option>
+                <option value="Negative">Negative</option>
+                <option value="Neutral">Neutral</option>
+                <option value="Mixed">Mixed</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="adminRatingFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Rating</label>
+              <select id="adminRatingFilter" onchange="applyAdminFilters()">
+                <option value="all">All Ratings</option>
+                <option value="5">5 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="2">2 Stars</option>
+                <option value="1">1 Star</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="adminAspectFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Aspect</label>
+              <select id="adminAspectFilter" onchange="applyAdminFilters()">
+                <option value="all">All Aspects</option>
+                <option value="Fitting">Fitting</option>
+                <option value="Quality">Quality</option>
+                <option value="Design">Design</option>
+                <option value="Color">Color</option>
+                <option value="Size">Size</option>
+                <option value="Material">Material</option>
+                <option value="Price">Price</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="adminSortFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Sort</label>
+              <select id="adminSortFilter" onchange="applyAdminFilters()">
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="rating_high">Highest Rating</option>
+                <option value="rating_low">Lowest Rating</option>
+                <option value="confidence_high">Highest Confidence</option>
+              </select>
+            </div>
+
+            <div style="display:flex; gap:6px;">
+              <button onclick="applyAdminFilters()">Search</button>
+              <button onclick="clearAdminFilters()" style="background:#757575;">Clear</button>
+            </div>
+          </div>
+
+          <div id="adminResultsCount" style="margin-bottom:10px; font-size:0.85rem; color:#666; font-weight:500;"></div>
+
           <div id="feedbackList" class="data-list">
             <div class="loading">Loading feedbacks...</div>
           </div>
+
+          <div id="adminPaginationBar" style="display:none; justify-content:center; align-items:center; gap:6px; margin:16px 0;"></div>
         </div>
 
+        <!-- ── Surveys Tab ─────────────────────────────────────────── -->
         <div id="surveyTab" class="tab-content">
           <div class="section-header">
             <h3>Survey Responses</h3>
@@ -129,10 +285,559 @@
             <div class="loading">Loading surveys...</div>
           </div>
         </div>
+
+        <!-- ── Moderation Tab ──────────────────────────────────────── -->
+        <div id="moderationTab" class="tab-content">
+          <div class="section-header">
+            <h3>Flagged &amp; Suspicious Feedback (Spam Moderation)</h3>
+            <button class="btn btn-secondary" onclick="loadFlaggedFeedbacks()">Refresh</button>
+          </div>
+          <div id="moderationList" class="data-list">
+            <div class="loading">Loading flagged feedback...</div>
+          </div>
+        </div>
+
+        <!-- ── Analytics Tab ──────────────────────────────────────── -->
+        <div id="analyticsTab" class="tab-content">
+
+          <!-- Status bar (loading / error) -->
+          <div id="analyticsStatus" style="display:none;"></div>
+
+          <!-- Filters -->
+          <div class="analytics-filters">
+            <label for="filterProduct">Product</label>
+            <select id="filterProduct" onchange="applyAnalyticsFilters()">
+              <option value="all">All Products</option>
+              <option value="tops">Tops</option>
+              <option value="jeans">Jeans</option>
+              <option value="dress">Dress</option>
+              <option value="jacket">Jacket</option>
+              <option value="shoes">Shoes</option>
+              <option value="accessories">Accessories</option>
+              <option value="general">General</option>
+            </select>
+
+            <label for="filterDays">Period</label>
+            <select id="filterDays" onchange="applyAnalyticsFilters()">
+              <option value="7">Last 7 Days</option>
+              <option value="30" selected>Last 30 Days</option>
+              <option value="90">Last 90 Days</option>
+              <option value="365">Last Year</option>
+            </select>
+
+            <label for="filterSentiment">Sentiment</label>
+            <select id="filterSentiment" onchange="applyAnalyticsFilters()">
+              <option value="all">All Sentiments</option>
+              <option value="Positive">Positive</option>
+              <option value="Negative">Negative</option>
+              <option value="Neutral">Neutral</option>
+              <option value="Mixed">Mixed</option>
+            </select>
+
+            <button onclick="applyAnalyticsFilters()">🔄 Refresh</button>
+          </div>
+
+          <!-- Overview cards -->
+          <div class="analytics-section">
+            <h4>Overview</h4>
+            <div id="analyticsOverview"><p class="analytics-loading">⏳ Loading overview...</p></div>
+          </div>
+
+          <!-- Sentiment + Rating side-by-side -->
+          <div class="analytics-two-col" style="margin-bottom:24px;">
+            <div class="analytics-section" style="margin-bottom:0;">
+              <h4>Sentiment Distribution</h4>
+              <div class="analytics-chart-box">
+                <canvas id="sentimentChart"></canvas>
+              </div>
+            </div>
+            <div class="analytics-section" style="margin-bottom:0;">
+              <h4>Rating Distribution</h4>
+              <div class="analytics-chart-box">
+                <canvas id="ratingChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aspect insights -->
+          <div class="analytics-section">
+            <h4>Aspect Analysis (Stacked)</h4>
+            <div class="analytics-chart-box" style="max-height:none;">
+              <canvas id="aspectChart" style="max-height:280px;"></canvas>
+            </div>
+          </div>
+
+          <div class="analytics-two-col" style="margin-bottom:24px;">
+            <div class="analytics-section" style="margin-bottom:0;">
+              <h4>Most Praised Aspects</h4>
+              <div id="topPositiveAspects"><p class="analytics-loading">Loading...</p></div>
+            </div>
+            <div class="analytics-section" style="margin-bottom:0;">
+              <h4>⚠️ Needs Attention (Top Complaints)</h4>
+              <div id="topNegativeAspects"><p class="analytics-loading">Loading...</p></div>
+            </div>
+          </div>
+
+          <!-- Product performance table -->
+          <div class="analytics-section">
+            <h4>Product Performance</h4>
+            <div id="productTable"><p class="analytics-loading">Loading products...</p></div>
+          </div>
+
+          <!-- Sentiment trend -->
+          <div class="analytics-section">
+            <h4>Sentiment Trend Over Time</h4>
+            <div class="analytics-chart-box" style="max-height:none;">
+              <canvas id="sentimentTrendChart" style="max-height:300px;"></canvas>
+            </div>
+          </div>
+
+          <!-- Feedback volume trend -->
+          <div class="analytics-section">
+            <h4>Feedback Volume Trend</h4>
+            <div class="analytics-chart-box" style="max-height:none;">
+              <canvas id="feedbackTrendChart" style="max-height:300px;"></canvas>
+            </div>
+          </div>
+
+          <!-- ── Phase 12: Recurring Complaints & Momentum ───────────── -->
+          <div class="analytics-section">
+            <h4>⚠️ Recurring Complaints &amp; Trend Momentum</h4>
+            <p style="color:#64748b; font-size:0.86rem; margin-bottom:16px;">
+              Tracks negative sentiment spikes and recurring complaint categories over equivalent, non-overlapping periods. A minimum of 5 customer reviews per period is required to establish trend direction.
+            </p>
+            <div id="complaintMomentumCard" style="margin-bottom:18px;">
+              <p class="analytics-loading">Loading complaint momentum...</p>
+            </div>
+            <div class="analytics-chart-box" style="max-height:none;">
+              <canvas id="complaintTrendChart" style="max-height:280px;"></canvas>
+            </div>
+          </div>
+
+          <!-- ── Phase 7: Reports & Data Export Section ───────── -->
+          <div class="analytics-section">
+            <h4>📑 Reports &amp; Data Export</h4>
+            <p style="color:#666; font-size:0.88rem; margin-bottom:16px;">
+              Export verified customer feedback and business intelligence reports matching your current filter selections.
+            </p>
+
+            <div class="analytics-filters" style="background:#fcfcfc; border:1px solid #eee; padding:16px; margin-bottom:16px; display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end;">
+              <div>
+                <label for="reportProductFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Product</label>
+                <select id="reportProductFilter">
+                  <option value="all">All Products</option>
+                  <option value="tops">Tops</option>
+                  <option value="jeans">Jeans</option>
+                  <option value="dress">Dress</option>
+                  <option value="jacket">Jacket</option>
+                  <option value="shoes">Shoes</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="reportSentimentFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Sentiment</label>
+                <select id="reportSentimentFilter">
+                  <option value="all">All Sentiments</option>
+                  <option value="Positive">Positive</option>
+                  <option value="Negative">Negative</option>
+                  <option value="Neutral">Neutral</option>
+                  <option value="Mixed">Mixed</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="reportRatingFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Rating</label>
+                <select id="reportRatingFilter">
+                  <option value="all">All Ratings</option>
+                  <option value="5">5 Stars</option>
+                  <option value="4">4 Stars</option>
+                  <option value="3">3 Stars</option>
+                  <option value="2">2 Stars</option>
+                  <option value="1">1 Star</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="reportDateFilter" style="display:block; font-size:0.78rem; font-weight:600; color:#555; margin-bottom:4px;">Period</label>
+                <select id="reportDateFilter">
+                  <option value="all">All Time</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="30" selected>Last 30 Days</option>
+                  <option value="90">Last 90 Days</option>
+                  <option value="365">Last Year</option>
+                </select>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:6px; padding-bottom:6px;">
+                <input type="checkbox" id="reportIncludeModeration" style="cursor:pointer;" />
+                <label for="reportIncludeModeration" style="font-size:0.8rem; color:#666; cursor:pointer;">Include Moderation Data</label>
+              </div>
+            </div>
+
+            <!-- Export Action Buttons -->
+            <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+              <button onclick="downloadFeedbackCSV()" class="btn" style="background:#2e7d32; color:#ffffff !important; display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; font-size:0.92rem; font-weight:600; border:none; cursor:pointer;" aria-label="Export Feedback CSV">
+                <span>📥</span> <span>Export Feedback CSV</span>
+              </button>
+              <button onclick="downloadAnalyticsCSV()" class="btn" style="background:#1565c0; color:#ffffff !important; display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; font-size:0.92rem; font-weight:600; border:none; cursor:pointer;" aria-label="Export Analytics CSV">
+                <span>📊</span> <span>Export Analytics CSV</span>
+              </button>
+              <button onclick="downloadBusinessPDF()" class="btn" style="background:#d81b60; color:#ffffff !important; display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; font-size:0.92rem; font-weight:600; border:none; cursor:pointer;" aria-label="Generate Business PDF">
+                <span>📑</span> <span>Generate Business PDF</span>
+              </button>
+            </div>
+
+            <!-- Download Status Notification -->
+            <div id="exportStatusMessage" style="display:none; margin-top:14px; padding:10px 14px; border-radius:8px; font-size:0.88rem; font-weight:500;"></div>
+          </div>
+
+        </div><!-- /analyticsTab -->
+
+        <!-- ── Phase 11: AI Insights Tab ─────────────────────────── -->
+        <div id="aiTab" class="tab-content">
+          <div class="ai-dashboard-wrap">
+            <section class="ai-header-card" aria-label="AI Insights Overview">
+              <div class="ai-header-info">
+                <h2><span>🤖</span> <span>AI Insights</span></h2>
+                <p>
+                  Turn customer feedback into actionable product intelligence. StyleFeedback AI retrieves authentic, approved customer feedback from MongoDB and synthesizes grounded insights with verified review citations.
+                </p>
+              </div>
+              <div class="ai-header-badge-box">
+                <span class="ai-provider-badge">RAG Intelligence Engine</span>
+                <span style="font-size:0.75rem; color:#94a3b8; letter-spacing:0.3px;">Grounding: Database-Verified</span>
+              </div>
+            </section>
+
+        <!-- Phase 12: AI Intelligence Mode Switcher -->
+        <div class="ai-mode-bar" role="tablist" aria-label="AI Intelligence Modes">
+          <button type="button" class="ai-mode-btn active" data-mode="ask" role="tab" aria-selected="true" onclick="window.switchAiMode('ask')">
+            <span>💬</span> <span>Ask AI</span>
+          </button>
+          <button type="button" class="ai-mode-btn" data-mode="compare" role="tab" aria-selected="false" onclick="window.switchAiMode('compare')">
+            <span>⚖️</span> <span>Product Comparison</span>
+          </button>
+          <button type="button" class="ai-mode-btn" data-mode="recommendations" role="tab" aria-selected="false" onclick="window.switchAiMode('recommendations')">
+            <span>🎯</span> <span>Recommendations</span>
+          </button>
+        </div>
+
+        <!-- Mode 1: Ask AI Panel -->
+        <div class="ai-mode-panel" data-mode="ask" style="display:block;">
+          <!-- B. Question Input Interface -->
+          <section class="ai-question-card" aria-label="Inquiry Input">
+            <label for="aiQuestionInput">Ask a Customer Intelligence Question</label>
+            <div class="ai-textarea-wrapper">
+              <textarea
+                id="aiQuestionInput"
+                class="ai-textarea"
+                placeholder="e.g., What are the main customer complaints about product quality?"
+                maxlength="500"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="ai-textarea-footer">
+              <span id="aiCharCounter" class="ai-char-counter">0 / 500</span>
+              <div class="ai-question-actions">
+                <button type="button" class="btn btn-ghost" onclick="document.getElementById('aiQuestionInput').value=''; window.updateAiCharCounter();" style="padding:6px 12px; font-size:0.85rem;">
+                  Clear
+                </button>
+                <button type="button" id="aiSubmitBtn" class="btn btn-primary" onclick="window.askAi()">
+                  <span>✨</span> <span>Ask AI</span>
+                </button>
+              </div>
+            </div>
+            <span id="aiQuestionError" class="error-message" style="display:none;"></span>
+
+            <!-- Clickable Example Question Chips -->
+            <div class="ai-suggested-prompts">
+              <div class="ai-suggested-title">Example inquiries:</div>
+              <div class="ai-prompt-chips-grid">
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('What are the most common complaints about product quality?')">
+                  🔍 Product quality complaints
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('Why are customers unhappy with fitting?')">
+                  👗 Fitting &amp; sizing issues
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('Summarize positive and negative feedback about dresses.')">
+                  📊 Dress sentiment summary
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('Which product aspects need the most improvement?')">
+                  ⚠️ Aspects needing improvement
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('What are customers saying about material quality?')">
+                  🧵 Fabric &amp; material feedback
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('What issues appear most frequently in recent feedback?')">
+                  ⚡ Recent recurring problems
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('What improvements should we prioritize based on negative reviews?')">
+                  🎯 High-priority fixes
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- C. Multi-Attribute Filter Controls -->
+          <section class="ai-filter-card" aria-label="Evidence Filters">
+            <div class="ai-filter-header">
+              <h4><span>🎯</span> <span>Target Evidence Filters (Optional)</span></h4>
+              <button type="button" class="btn btn-ghost" onclick="window.clearAllAiFilters()" style="padding:4px 10px; font-size:0.8rem;">
+                ↺ Reset Filters
+              </button>
+            </div>
+
+            <div class="ai-filter-grid">
+              <div class="ai-filter-item">
+                <label for="aiFilterProduct">Product Category</label>
+                <select id="aiFilterProduct">
+                  <option value="all">All Products</option>
+                  <option value="tops">Tops</option>
+                  <option value="jeans">Jeans</option>
+                  <option value="dress">Dress</option>
+                  <option value="jacket">Jacket</option>
+                  <option value="shoes">Shoes</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="aiFilterSentiment">Sentiment</label>
+                <select id="aiFilterSentiment">
+                  <option value="all">All Sentiments</option>
+                  <option value="Positive">Positive</option>
+                  <option value="Negative">Negative</option>
+                  <option value="Neutral">Neutral</option>
+                  <option value="Mixed">Mixed</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="aiFilterRating">Rating</label>
+                <select id="aiFilterRating">
+                  <option value="all">All Ratings</option>
+                  <option value="5">5 Stars ★★★★★</option>
+                  <option value="4">4 Stars ★★★★☆</option>
+                  <option value="3">3 Stars ★★★☆☆</option>
+                  <option value="2">2 Stars ★★☆☆☆</option>
+                  <option value="1">1 Star ★☆☆☆☆</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="aiFilterAspect">Fashion Aspect</label>
+                <select id="aiFilterAspect">
+                  <option value="all">All Aspects</option>
+                  <option value="Fitting">Fitting</option>
+                  <option value="Quality">Quality</option>
+                  <option value="Design">Design</option>
+                  <option value="Color">Color</option>
+                  <option value="Size">Size</option>
+                  <option value="Material">Material</option>
+                  <option value="Price">Price</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="aiFilterDateRange">Time Period</label>
+                <select id="aiFilterDateRange">
+                  <option value="all">All Time</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="90">Last 90 Days</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item" style="grid-column: span 2;">
+                <label>Custom Date Window (Optional)</label>
+                <div class="ai-custom-dates-box">
+                  <input type="date" id="aiFilterDateFrom" aria-label="Start Date" />
+                  <input type="date" id="aiFilterDateTo" aria-label="End Date" />
+                </div>
+              </div>
+            </div>
+
+            <div id="aiActiveFiltersBar" class="ai-active-filters-bar"></div>
+          </section>
+
+          <!-- D. AI Response & Evidence Area -->
+          <section id="aiResponseArea" class="ai-response-area" aria-live="polite">
+            <div class="ai-empty-state">
+              <div class="ai-empty-icon">💡</div>
+              <h3>Ready for Customer Intelligence</h3>
+              <p>
+                Select an example question above or type your own question to analyze customer reviews with Retrieval-Augmented Generation.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Mode 2: Product Comparison Panel -->
+        <div class="ai-mode-panel" data-mode="compare" style="display:none;">
+          <section class="ai-question-card" aria-label="Product Comparison Selector">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#0f172a; margin:0 0 4px 0;">Select Products to Compare</h3>
+                <p style="font-size:0.85rem; color:#64748b; margin:0;">
+                  Select 2 to 5 product categories to evaluate measured database performance and comparative AI intelligence.
+                </p>
+              </div>
+              <span id="compareSelectedCount" style="font-size:0.82rem; font-weight:600; background:#fce4ec; color:#c2185b; padding:4px 12px; border-radius:14px;">
+                2 of 5 selected
+              </span>
+            </div>
+
+            <div class="compare-product-chips-grid">
+              <button type="button" class="compare-product-chip" data-product="tops" onclick="window.toggleCompareProduct('tops')">
+                Tops
+              </button>
+              <button type="button" class="compare-product-chip active" data-product="jeans" onclick="window.toggleCompareProduct('jeans')">
+                Jeans
+              </button>
+              <button type="button" class="compare-product-chip active" data-product="dress" onclick="window.toggleCompareProduct('dress')">
+                Dress
+              </button>
+              <button type="button" class="compare-product-chip" data-product="jacket" onclick="window.toggleCompareProduct('jacket')">
+                Jacket
+              </button>
+              <button type="button" class="compare-product-chip" data-product="shoes" onclick="window.toggleCompareProduct('shoes')">
+                Shoes
+              </button>
+              <button type="button" class="compare-product-chip" data-product="accessories" onclick="window.toggleCompareProduct('accessories')">
+                Accessories
+              </button>
+              <button type="button" class="compare-product-chip" data-product="general" onclick="window.toggleCompareProduct('general')">
+                General
+              </button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding-top:14px; border-top:1px solid #f1f5f9; flex-wrap:wrap; gap:12px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <label for="compareFilterDateRange" style="font-size:0.85rem; font-weight:600; color:#475569; margin:0;">Time Period:</label>
+                <select id="compareFilterDateRange" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.85rem; color:#334155;">
+                  <option value="all">All Time</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="90">Last 90 Days</option>
+                </select>
+              </div>
+
+              <button type="button" id="btnRunComparison" class="btn btn-primary" onclick="window.runProductComparison()">
+                <span>⚖️</span> <span>Run Product Comparison</span>
+              </button>
+            </div>
+          </section>
+
+          <section id="aiCompareResponseArea" class="ai-response-area" aria-live="polite">
+            <div class="ai-empty-state">
+              <div class="ai-empty-icon">⚖️</div>
+              <h3>Multi-Product Comparison Intelligence</h3>
+              <p>
+                Select 2 to 5 product categories above and click &ldquo;Run Product Comparison&rdquo; to benchmark customer satisfaction, recurring complaints, and positive themes.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Mode 3: Strategic AI Recommendations Panel -->
+        <div class="ai-mode-panel" data-mode="recommendations" style="display:none;">
+          <section class="ai-filter-card" aria-label="Recommendation Parameters">
+            <div class="ai-filter-header">
+              <div>
+                <h4 style="margin:0 0 4px 0;"><span>🎯</span> <span>Formulate Strategic Recommendations</span></h4>
+                <p style="font-size:0.83rem; color:#64748b; margin:0;">
+                  Generate prioritized, evidence-backed business actions synthesized from approved customer reviews.
+                </p>
+              </div>
+            </div>
+
+            <div class="ai-filter-grid" style="margin-top:14px;">
+              <div class="ai-filter-item">
+                <label for="recProductSelect">Target Product</label>
+                <select id="recProductSelect">
+                  <option value="all">All Products (Cross-Catalog)</option>
+                  <option value="tops">Tops</option>
+                  <option value="jeans">Jeans</option>
+                  <option value="dress">Dress</option>
+                  <option value="jacket">Jacket</option>
+                  <option value="shoes">Shoes</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="recFocusSelect">Strategic Focus Area</label>
+                <select id="recFocusSelect">
+                  <option value="all">All Focus Areas</option>
+                  <option value="quality">Product Quality &amp; Craftsmanship</option>
+                  <option value="fitting">Fitting &amp; Sizing Accuracy</option>
+                  <option value="material">Material &amp; Fabric Durability</option>
+                  <option value="design">Design &amp; Visual Appeal</option>
+                  <option value="returns">Returns &amp; Sizing Reductions</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="recDateRangeSelect">Time Period</label>
+                <select id="recDateRangeSelect">
+                  <option value="all">All Time</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="90">Last 90 Days</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid #f1f5f9;">
+              <button type="button" id="btnRunRecommendations" class="btn btn-primary" onclick="window.runAiRecommendations()">
+                <span>🎯</span> <span>Generate Strategic Recommendations</span>
+              </button>
+            </div>
+          </section>
+
+          <section id="aiRecommendationsResponseArea" class="ai-response-area" aria-live="polite">
+            <div class="ai-empty-state">
+              <div class="ai-empty-icon">🎯</div>
+              <h3>Strategic Recommendations Engine</h3>
+              <p>
+                Select a product category and strategic focus area above, then click &ldquo;Generate Strategic Recommendations&rdquo; to formulate evidence-based action items.
+              </p>
+            </div>
+          </section>
+        </div>
+
+          </div>
+        </div><!-- /aiTab -->
+
       </div>
     </div>
   </main>
 
+  <!-- Image lightbox overlay (Phase 3) -->
+  <div id="lightboxOverlay" onclick="this.style.display='none'" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;">
+    <img id="lightboxImg" src="" alt="Review Photo" style="max-width:90vw;max-height:90vh;border-radius:10px;box-shadow:0 4px 40px rgba(0,0,0,.5);"/>
+  </div>
+
+  <!-- ── Admin Feedback Detail Modal (Phase 6) ───────────── -->
+  <div id="adminFeedbackDetailModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:10000; align-items:center; justify-content:center; padding:16px;" onclick="closeAdminDetailModal(event)">
+    <div style="background:#fff; border-radius:12px; width:100%; max-width:640px; max-height:90vh; overflow-y:auto; box-shadow:0 10px 40px rgba(0,0,0,0.3); padding:24px; box-sizing:border-box;" onclick="event.stopPropagation()">
+      <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:12px; margin-bottom:16px;">
+        <h3 style="margin:0; font-size:1.18rem; color:#2c2c2c;">Admin Feedback Intelligence</h3>
+        <button onclick="closeAdminDetailModal()" style="background:transparent; border:none; font-size:1.6rem; cursor:pointer; color:#888; line-height:1;">&times;</button>
+      </div>
+      <div id="adminDetailBody">
+        <div class="loading">Loading details...</div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/admin.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/ai-insights.js"></script>
 </body>
 </html>

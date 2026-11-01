@@ -1,157 +1,248 @@
-
-
-// const express = require("express");
-// const router = express.Router();
-// const User = require("../models/user");
-// console.log("✅ auth.js loaded");
-
-// // ✅ Simple test route
-// router.get("/ping", (req, res) => {
-//   res.json({ message: "Auth router is working" });
-// });
-
-
-
-// // ✅ POST /api/auth/register
-
-
-// router.post("/register", async (req, res) => {
-//   console.log("📥 POST /register hit");                     // Logs when endpoint is hit
-//   console.log("📝 Request body:", req.body);                // Logs the incoming data
-
-//   const { username, password } = req.body;
-
-//   if (!username || !password) {
-//     console.log("❌ Missing fields");
-//     return res.status(400).json({ error: "All fields are required" });
-//   }
-
-//   try {
-//     const existingUser = await User.findOne({ username });
-
-//     if (existingUser) {
-//       console.log("⚠️ Username already exists");
-//       return res.status(409).json({ error: "Username already exists" });
-//     }
-
-//     const newUser = new User({ username, password });
-//     await newUser.save();
-
-//     console.log("✅ New user registered:", username);
-//     res.status(201).json({ message: "User registered successfully" });
-//   } catch (error) {
-//     console.error("🚨 Registration error:", error);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// });
-
-
-// // ✅ POST /api/auth/login
-// router.post("/login", async (req, res) => {
-//   console.log("📥 POST /login hit"); // Debug
-//   console.log("📝 Request body:", req.body); // Debug
-
-//   const { username, password } = req.body;
-
-//   try {
-//     const user = await User.findOne({ username });
-
-//     if (!user || user.password !== password) {
-//       console.log("❌ Invalid credentials"); // Debug
-//       return res.status(401).json({ error: "Invalid username or password" });
-//     }
-
-//     console.log("✅ Login successful for:", username); // Debug
-//     return res.json({ message: "Login successful" });
-//   } catch (err) {
-//     console.error("🚨 Login error:", err); // Debug
-//     return res.status(500).json({ error: "Server error" });
-//   }
-// });
-
-
-// module.exports = router;
-
-
-
-
-
-
 const express = require("express");
 const router = express.Router();
 const User = require("../models/user");
+const { verifyToken, generateToken } = require("../middleware/auth");
+const { authLimiter, registerLimiter } = require("../middleware/rateLimiter");
 
-console.log("✅ auth.js loaded");
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || "admin@stylefeedback.com").toLowerCase();
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
-// ✅ Simple test route
+// Helper function to ensure default admin exists in MongoDB if requested
+async function findOrCreateAdmin(email, password) {
+  let admin = await User.findOne({ email: email.toLowerCase() });
+  if (!admin) {
+    // If credentials match configured admin env, seed the admin account securely
+    if (email.toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      admin = new User({
+        username: "admin",
+        email: ADMIN_EMAIL,
+        password: ADMIN_PASSWORD,
+        role: "admin",
+      });
+      await admin.save();
+      return admin;
+    }
+    return null;
+  }
+  return admin;
+}
+
+// ✅ Health check route
 router.get("/ping", (req, res) => {
-  res.json({ message: "Auth router is working" });
+  res.json({ success: true, message: "Auth router is working" });
 });
 
-// ✅ POST /api/auth/register (User registration)
-router.post("/register", async (req, res) => {
-  console.log("📥 POST /register hit");
-  console.log("📝 Request body:", req.body);
+// ✅ GET /api/auth/me (Get authenticated user profile)
+router.get("/me", verifyToken, (req, res) => {
+  res.json({
+    success: true,
+    user: req.user,
+  });
+});
 
-  const { username, password } = req.body;
-
-  if (!username || !password) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
-
+// ✅ POST /api/auth/register (Customer registration)
+router.post("/register", registerLimiter, async (req, res) => {
   try {
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      return res.status(409).json({ error: "Username already exists" });
+    const { username, email, password } = req.body;
+
+    // Validate presence of required fields
+    if (!username || !username.trim() || !password) {
+      return res.status(400).json({
+        success: false,
+        error: "Username and password are required.",
+      });
     }
 
-    const newUser = new User({ username, password });
+    if (password.length < 6) {
+      return res.status(400).json({
+        success: false,
+        error: "Password must be at least 6 characters long.",
+      });
+    }
+
+    const trimmedUsername = username.trim();
+    const cleanEmail = email ? email.trim().toLowerCase() : `${trimmedUsername.toLowerCase()}@stylefeedback.local`;
+
+    if (email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(cleanEmail)) {
+        return res.status(400).json({
+          success: false,
+          error: "Please enter a valid email address.",
+        });
+      }
+    }
+
+    // Check for existing username
+    const existingUser = await User.findOne({ username: trimmedUsername });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        error: "Username already exists.",
+      });
+    }
+
+    // Check for existing email if provided
+    if (email) {
+      const existingEmail = await User.findOne({ email: cleanEmail });
+      if (existingEmail) {
+        return res.status(409).json({
+          success: false,
+          error: "Email is already registered.",
+        });
+      }
+    }
+
+    // Assign admin role only if email strictly matches configured admin email
+    const assignedRole = cleanEmail === ADMIN_EMAIL ? "admin" : "customer";
+
+    const newUser = new User({
+      username: trimmedUsername,
+      email: cleanEmail,
+      password: password,
+      role: assignedRole,
+    });
+
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    // Generate JWT token
+    const token = generateToken(newUser);
+
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      token,
+      user: {
+        id: newUser._id,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+        createdAt: newUser.createdAt,
+      },
+    });
   } catch (error) {
     console.error("🚨 Registration error:", error);
-    res.status(500).json({ error: "Server error" });
+    return res.status(500).json({
+      success: false,
+      error: "Server error during registration.",
+    });
   }
 });
 
-// ✅ POST /api/auth/login (User login)
-router.post("/login", async (req, res) => {
-  console.log("📥 POST /login hit");
-  console.log("📝 Request body:", req.body);
-
-  const { username, password } = req.body;
-
+// ✅ POST /api/auth/login (Customer and user login)
+router.post("/login", authLimiter, async (req, res) => {
   try {
-    const user = await User.findOne({ username });
+    const { username, email, password } = req.body;
+    const identifier = (username || email || "").trim();
 
-    if (!user || user.password !== password) {
-      return res.status(401).json({ error: "Invalid username or password" });
+    if (!identifier || !password) {
+      return res.status(400).json({
+        success: false,
+        error: "Please provide your username/email and password.",
+      });
     }
 
-    console.log("✅ Login successful for:", username);
-    return res.json({ message: "Login successful" });
+    // Find by username or email
+    const user = await User.findOne({
+      $or: [
+        { username: identifier },
+        { email: identifier.toLowerCase() },
+      ],
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid username or password.",
+      });
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid username or password.",
+      });
+    }
+
+    const token = generateToken(user);
+
+    return res.json({
+      success: true,
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     console.error("🚨 Login error:", err);
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json({
+      success: false,
+      error: "Server error during login.",
+    });
   }
 });
 
-// ✅ POST /api/auth/admin-login (Admin login)
-router.post("/admin-login", (req, res) => {
-  console.log("📥 POST /admin-login hit");
-  const { email, password } = req.body;
+// ✅ POST /api/auth/admin-login (Admin login with JWT issuance)
+router.post("/admin-login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  // You can move this to .env for better security
-  const ADMIN_EMAIL = "admin@stylefeedback.com";
-  const ADMIN_PASSWORD = "admin123";
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required.",
+      });
+    }
 
-  if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-    console.log("✅ Admin login successful");
-    return res.status(200).json({ success: true, message: "Admin login successful" });
-  } else {
-    console.log("❌ Admin login failed");
-    return res.status(401).json({ success: false, message: "Invalid admin credentials" });
+    const cleanEmail = email.trim().toLowerCase();
+    let admin = await findOrCreateAdmin(cleanEmail, password);
+
+    if (!admin) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin credentials.",
+      });
+    }
+
+    if (admin.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied. Account does not have admin privileges.",
+      });
+    }
+
+    const isMatch = await admin.comparePassword(password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid admin credentials.",
+      });
+    }
+
+    const token = generateToken(admin);
+
+    return res.status(200).json({
+      success: true,
+      message: "Admin login successful",
+      token,
+      user: {
+        id: admin._id,
+        username: admin.username,
+        email: admin.email,
+        role: admin.role,
+      },
+    });
+  } catch (error) {
+    console.error("🚨 Admin login error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error during admin login.",
+    });
   }
 });
 

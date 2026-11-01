@@ -3,30 +3,193 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>StyleFeedback - Your Fashion Voice</title>
+  <title>StyleFeedback - Fashion Feedback Intelligence &amp; Analytics Platform</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link href="css/style.css" rel="stylesheet" />
-  <script>
-    if (!localStorage.getItem("isLoggedIn")) {
-      window.location.href = "login.html";
+  <style>
+    /* ── Hero Slideshow & Redesign ─────────────────────────── */
+    .hero-slideshow-container {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
     }
-  </script>
+    .hero-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+      background-size: cover;
+      background-position: center;
+    }
+    .hero-slide.active {
+      opacity: 1;
+    }
+    .hero-slide-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+      padding: 24px 20px 18px 20px;
+      color: #fff;
+    }
+    .hero-slide-tag {
+      display: inline-block;
+      background: #e91e63;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .hero-slide-caption {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .hero-slide-dots {
+      position: absolute;
+      bottom: 12px;
+      right: 16px;
+      display: flex;
+      gap: 6px;
+      z-index: 5;
+    }
+    .hero-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .hero-dot.active {
+      background: #fff;
+      width: 22px;
+      border-radius: 10px;
+    }
+
+    /* ── Live Stats Bar ─────────────────────────────────────── */
+    .stats-bar-section {
+      background: #fff;
+      padding: 30px 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      margin-top: -30px;
+      position: relative;
+      z-index: 10;
+      border-radius: 14px;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #e91e63;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 0.88rem;
+      color: #666;
+      font-weight: 500;
+    }
+
+    /* ── Nav Auth Actions ───────────────────────────────────── */
+    .nav-auth-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-greeting {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .btn-nav-auth {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-login {
+      background: #fce4ec;
+      color: #e91e63;
+      border: 1px solid #f8bbd0;
+    }
+    .btn-login:hover {
+      background: #e91e63;
+      color: #fff;
+    }
+    .btn-register {
+      background: #e91e63;
+      color: #fff;
+    }
+    .btn-register:hover {
+      background: #d81b60;
+    }
+    .btn-logout {
+      background: #f5f5f5;
+      color: #555;
+      border: 1px solid #ddd;
+      cursor: pointer;
+    }
+    .btn-logout:hover {
+      background: #ffebee;
+      color: #c62828;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hero .container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      .hero-slideshow-container {
+        height: 280px;
+      }
+      .stats-bar-section {
+        margin-top: 15px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Header -->
+  <!-- Header Navigation -->
   <header class="header">
     <div class="container">
       <div class="logo">
-        <h1><a href="index.html" style="text-decoration: none; color: inherit;">StyleFeedback</a></h1>
+        <h1><a href="index.html">StyleFeedback</a></h1>
       </div>
-      <nav class="nav">
-        <a href="#home" class="nav-link">Home</a>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#contact" class="nav-link">Contact</a>
-       <a href="admin.html" class="nav-link admin-link">Admin</a>
-      
-
+      <nav class="nav" id="mainNav">
+        <a href="index.html" class="nav-link" style="color:#e91e63; font-weight:600;">Home</a>
+        <a href="feedback.html" class="nav-link">Feedback</a>
+        <a href="survey.html" class="nav-link">Survey</a>
+        <a href="product.html" class="nav-link">Fashion Insights</a>
+        
+        <!-- Dynamic Auth Buttons injected by script -->
+        <div id="authNavContainer" class="nav-auth-box">
+          <a href="login.html" class="btn-nav-auth btn-login">Login</a>
+          <a href="register.html" class="btn-nav-auth btn-register">Register</a>
+        </div>
       </nav>
     </div>
   </header>
@@ -35,113 +198,263 @@
   <section class="hero" id="home">
     <div class="container">
       <div class="hero-content">
-        <h2 class="hero-title">Share Your Fashion Experience</h2>
-        <p class="hero-subtitle">
-          Help us improve our clothing collection with your valuable feedback and style preferences
+        <h2 class="hero-title" style="font-size: 2.5rem; line-height: 1.25; margin-bottom: 1.2rem;">
+          Turn Fashion Feedback Into Business Insights
+        </h2>
+        <p class="hero-subtitle" style="font-size: 1.05rem; opacity: 0.95; line-height: 1.6; margin-bottom: 2rem;">
+          Empowering apparel brands with real customer intelligence. Collect verified reviews, automatically analyze fitting &amp; fabric aspects, and shape high-performing clothing collections.
         </p>
-        <div class="hero-buttons">
-          <a href="feedback.html" class="btn btn-primary">Give Feedback</a>
-          <a href="survey.html" class="btn btn-secondary">Take Survey</a>
+        <div class="hero-buttons" style="display: flex; gap: 14px; flex-wrap: wrap;">
+          <a href="feedback.html" class="btn btn-primary" style="font-weight: 700;">Give Feedback</a>
+          <a href="feedback.html#publicReviewsContainer" class="btn btn-secondary" style="font-weight: 600; border: 2px solid #fff;">Explore Feedback</a>
         </div>
       </div>
+
+      <!-- Fashion Slideshow -->
       <div class="hero-image">
-        <div class="feedback-quote">"Feedback is the breakfast of champions." – Ken Blanchard</div>
+        <div class="hero-slideshow-container" id="heroSlideshow">
+          <div class="hero-slide active" style="background-image: url('Images/dress 1.webp');">
+            <div class="hero-slide-overlay">
+              <span class="hero-slide-tag">Dresses &amp; Elegance</span>
+              <p class="hero-slide-caption">Silhouette &amp; Fabric Quality Insights</p>
+            </div>
+          </div>
+          <div class="hero-slide" style="background-image: url('Images/jacket 1.jpg');">
+            <div class="hero-slide-overlay">
+              <span class="hero-slide-tag">Outerwear Collection</span>
+              <p class="hero-slide-caption">Zipper Durability &amp; Weatherproof Performance</p>
+            </div>
+          </div>
+          <div class="hero-slide" style="background-image: url('Images/Pant1.webp');">
+            <div class="hero-slide-overlay">
+              <span class="hero-slide-tag">Tailored Denim</span>
+              <p class="hero-slide-caption">Precision Fitting &amp; Waist Stretch Optimization</p>
+            </div>
+          </div>
+          <div class="hero-slide" style="background-image: url('Images/jewel 1.avif');">
+            <div class="hero-slide-overlay">
+              <span class="hero-slide-tag">Fashion Accessories</span>
+              <p class="hero-slide-caption">Anti-Tarnish Finishes &amp; Trending Aesthetics</p>
+            </div>
+          </div>
+
+          <div class="hero-slide-dots" id="heroSlideDots">
+            <span class="hero-dot active" onclick="setSlide(0)"></span>
+            <span class="hero-dot" onclick="setSlide(1)"></span>
+            <span class="hero-dot" onclick="setSlide(2)"></span>
+            <span class="hero-dot" onclick="setSlide(3)"></span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="features" id="about">
+  <!-- Live Platform Stats Strip -->
+  <section class="container" style="padding-top: 0;">
+    <div class="stats-bar-section">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Verified Moderated Reviews</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">7+</div>
+          <div class="stat-label">Fashion Aspects Analyzed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="statReviewCount">28+</div>
+          <div class="stat-label">Customer Reviews Analyzed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">24/7</div>
+          <div class="stat-label">Spam &amp; Duplication Shield</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value Pillars Section -->
+  <section class="features" id="about" style="padding: 4rem 0;">
     <div class="container">
-      <h2 class="section-title">Why Your Opinion Matters</h2>
+      <h2 class="section-title">Fashion Feedback Intelligence</h2>
       <div class="features-grid">
 
         <a href="feedback.html" class="feature-card">
           <div class="feature-icon">💬</div>
-          <h3>Share Feedback</h3>
-          <p>Tell us about your experience with our clothing products</p>
+          <h3>Voice of the Customer</h3>
+          <p>Submit reviews with optional photo proof. Help apparel designers understand real fitting, fabric comfort, and styling issues.</p>
         </a>
 
-        <a href="survey.html" class="feature-card">
-          <div class="feature-icon">📊</div>
-          <h3>Style Survey</h3>
-          <p>Help us understand your fashion preferences and style choices</p>
+        <a href="feedback.html#publicReviewsContainer" class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>Intelligence Browser</h3>
+          <p>Search and filter verified community feedback by fashion aspect, star rating, product category, or sentiment.</p>
         </a>
 
         <a href="product.html" class="feature-card">
           <div class="feature-icon">🎯</div>
-          <h3>Better Products</h3>
-          <p>See how we’ve improved our collections based on your feedback</p>
+          <h3>Customer-Informed Insights</h3>
+          <p>View live collection analytics showing how customer opinions directly inform product upgrades and craftsmanship.</p>
+        </a>
+
+        <a href="survey.html" class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Style &amp; Preference Survey</h3>
+          <p>Participate in seasonal style surveys to help forecast trending color palettes, silhouettes, and wardrobe essentials.</p>
         </a>
 
       </div>
     </div>
   </section>
-  <!-- Contact Section -->
-<section class="contact" id="contact">
-  <div class="container">
-    <h2 class="section-title">Contact Us</h2>
-    <p class="contact-description">Have questions or suggestions? Reach out to us anytime.</p>
-    <div class="contact-grid">
-      <div class="contact-item">
-        <h3>Email</h3>
-        <p><a href="mailto:support@stylefeedback.com">support@stylefeedback.com</a></p>
-      </div>
-      <div class="contact-item">
-        <h3>Phone</h3>
-        <p>+91 98765 43210</p>
-      </div>
-      <div class="contact-item">
-        <h3>Address</h3>
-        <p>Fashion Street, Mumbai, Maharashtra, India</p>
+
+  <!-- Contact Us Section -->
+  <section class="contact" id="contact" style="background: #f9f9f9; padding: 4rem 0;">
+    <div class="container">
+      <h2 class="section-title" style="margin-bottom: 1rem;">Get In Touch</h2>
+      <p class="contact-description" style="text-align: center; color: #666; margin-bottom: 2.5rem;">
+        Have suggestions, fashion brand inquiries, or partnership proposals? Reach our team anytime.
+      </p>
+      <div class="contact-grid">
+        <div class="contact-item">
+          <div class="contact-item-icon">✉️</div>
+          <h3>Email Us</h3>
+          <p><a href="mailto:support@stylefeedback.com">support@stylefeedback.com</a></p>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">📞</div>
+          <h3>Call Us</h3>
+          <p><a href="tel:+919876543210">+91 98765 43210</a></p>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">📍</div>
+          <h3>Visit Studio</h3>
+          <p>Fashion Innovation Hub, Bandra West, Mumbai, India</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
+  <!-- Professional Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div class="footer-brand">
+        <h2>StyleFeedback</h2>
+        <p>Transforming customer feedback into actionable fashion intelligence.</p>
+      </div>
 
-  <!-- Footer -->
-  <!-- <footer class="footer">
-    <div class="container">
-      <p>&copy; 2024 StyleFeedback. All rights reserved.</p>
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="feedback.html">Give Feedback</a></li>
+          <li><a href="feedback.html#publicReviewsContainer">Explore Reviews</a></li>
+          <li><a href="survey.html">Style Survey</a></li>
+          <li><a href="product.html">Fashion Insights</a></li>
+          <li><a href="admin-login.html">Admin Portal</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links">
+        <h4>Platform</h4>
+        <ul>
+          <li><span style="color:#888;">Aspect Analysis</span></li>
+          <li><span style="color:#888;">Sentiment Intelligence</span></li>
+          <li><span style="color:#888;">Spam Moderation Shield</span></li>
+          <li><span style="color:#888;">Business PDF Reporting</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 StyleFeedback Intelligence Platform. All rights reserved.</p>
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <!-- Dynamic Auth State & Slideshow Script -->
+  <script>
+    // 1. Navigation Auth State Management
+    (function renderNavAuth() {
+      const authBox = document.getElementById('authNavContainer');
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const adminToken = localStorage.getItem('adminToken');
+
+      if (token && user) {
+        const displayName = user.username || user.name || 'Member';
+        authBox.innerHTML = `
+          <span class="user-greeting">👋 Hi, ${escapeNav(displayName)}</span>
+          <button onclick="handleLogout()" class="btn-nav-auth btn-logout">Logout</button>
+        `;
+      } else if (adminToken) {
+        authBox.innerHTML = `
+          <a href="admin.html" class="btn-nav-auth btn-login">Admin Panel</a>
+          <a href="admin-ai.html" class="btn-nav-auth btn-register">✨ AI Insights</a>
+          <button onclick="handleLogout()" class="btn-nav-auth btn-logout">Logout</button>
+        `;
+      } else {
+        authBox.innerHTML = `
+          <a href="login.html" class="btn-nav-auth btn-login">Login</a>
+          <a href="register.html" class="btn-nav-auth btn-register">Register</a>
+        `;
+      }
+    })();
+
+    function escapeNav(str) {
+      return String(str).replace(/[&<>"']/g, '');
+    }
+
+    window.handleLogout = function() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
+      localStorage.removeItem('isAdminLoggedIn');
+      window.location.reload();
+    };
+
+    // 2. Hero Background Slideshow with Auto-Transition
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('.hero-dot');
+    let slideTimer = null;
+
+    function showSlide(index) {
+      if (slides.length === 0) return;
+      currentSlide = (index + slides.length) % slides.length;
+      slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+    }
+
+    window.setSlide = function(index) {
+      clearInterval(slideTimer);
+      showSlide(index);
+      startSlideShow();
+    };
+
+    function startSlideShow() {
+      slideTimer = setInterval(() => {
+        showSlide(currentSlide + 1);
+      }, 4500);
+    }
+
+    startSlideShow();
+
+    // 3. Dynamic Live Review Counter from MongoDB
+    (async function fetchLiveReviewCount() {
+      const countEl = document.getElementById('statReviewCount');
+      if (!countEl) return;
+      try {
+        const res = await fetch('/api/feedback?limit=1');
+        if (!res.ok) return;
+        const json = await res.json();
+        if (json && json.success && json.pagination && typeof json.pagination.total === 'number') {
+          countEl.textContent = json.pagination.total + '+';
+        }
+      } catch (err) {
+        console.warn('Could not fetch live review count:', err);
+      }
+    })();
+  </script>
 </body>
-</html> -->
-<!-- Footer -->
-<footer class="footer">
-  <div class="container footer-container">
-    <div class="footer-brand">
-      <h2>StyleFeedback</h2>
-      <p>Your voice in fashion. Help us shape better clothing experiences.</p>
-    </div>
-
-    <div class="footer-links">
-      <h4>Quick Links</h4>
-      <ul>
-        <li><a href="#home">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a href="feedback.html">Feedback</a></li>
-        <li><a href="survey.html">Survey</a></li>
-      </ul>
-    </div>
-
-    <div class="footer-social">
-      <h4>Connect</h4>
-      <div class="social-icons">
-        <a href="#"><span>🌐</span></a>
-        <a href="#"><span>📘</span></a>
-        <a href="#"><span>📸</span></a>
-        <a href="#"><span>📌</span></a>
-      </div>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>&copy; 2024 StyleFeedback. All rights reserved.</p>
-  </div>
-</footer>
-
+</html>

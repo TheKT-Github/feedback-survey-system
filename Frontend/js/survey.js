@@ -60,10 +60,17 @@ document.addEventListener('DOMContentLoaded', function () {
       submittedAt: new Date().toISOString()
     };
 
+    const API_BASE = (window.location.protocol.startsWith('http') && (window.location.port === '3000' || !window.location.port)) ? '' : 'http://localhost:3000';
+    const token = localStorage.getItem('token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     try {
-      const res = await fetch('http://localhost:3000/api/survey', {
+      const res = await fetch(`${API_BASE}/api/survey`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(formData)
       });
 

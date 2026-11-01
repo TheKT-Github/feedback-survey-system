@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Insights &mdash; StyleFeedback Intelligence</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="css/style.css" rel="stylesheet" />
+
+  <!-- Administrator Authentication Guard -->
+  <script>
+    (function() {
+      const adminToken = localStorage.getItem("adminToken");
+      const adminUser = JSON.parse(localStorage.getItem("adminUser") || "null");
+      const user = JSON.parse(localStorage.getItem("user") || "null");
+      const isAdmin = (adminToken && (adminUser?.role === 'admin' || localStorage.getItem("isAdminLoggedIn") === "true")) || (user && user.role === 'admin');
+      
+      if (!isAdmin) {
+        window.location.replace("admin-login.html");
+      }
+    })();
+  </script>
+</head>
+<body>
+  <!-- Header Navigation -->
+  <header class="header">
+    <div class="container">
+      <div class="logo">
+        <h1><a href="index.html">StyleFeedback</a></h1>
+      </div>
+      <nav class="nav" id="adminMainNav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="admin.html" class="nav-link">Admin Panel</a>
+        <a href="admin-ai.html" class="nav-link active">? AI Insights</a>
+        <button onclick="handleAdminLogout()" class="btn btn-secondary" style="padding:6px 14px; font-size:0.85rem;">Logout</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <div class="ai-dashboard-wrap">
+
+        <!-- A. Page Header Banner -->
+        <section class="ai-header-card" aria-label="AI Insights Overview">
+          <div class="ai-header-info">
+            <h2><span>??</span> <span>AI Insights</span></h2>
+            <p>
+              Turn customer feedback into actionable product intelligence. StyleFeedback AI retrieves authentic, approved customer feedback from MongoDB and synthesizes grounded insights with verified review citations.
+            </p>
+          </div>
+          <div class="ai-header-badge-box">
+            <span class="ai-provider-badge">RAG Intelligence Engine</span>
+            <span style="font-size:0.75rem; color:#94a3b8; letter-spacing:0.3px;">Grounding: Database-Verified</span>
+          </div>
+        </section>
+
+        <!-- Phase 12: AI Intelligence Mode Switcher -->
+        <div class="ai-mode-bar" role="tablist" aria-label="AI Intelligence Modes">
+          <button type="button" class="ai-mode-btn active" data-mode="ask" role="tab" aria-selected="true" onclick="window.switchAiMode('ask')">
+            <span>💬</span> <span>Ask AI</span>
+          </button>
+          <button type="button" class="ai-mode-btn" data-mode="compare" role="tab" aria-selected="false" onclick="window.switchAiMode('compare')">
+            <span>⚖️</span> <span>Product Comparison</span>
+          </button>
+          <button type="button" class="ai-mode-btn" data-mode="recommendations" role="tab" aria-selected="false" onclick="window.switchAiMode('recommendations')">
+            <span>🎯</span> <span>Recommendations</span>
+          </button>
+        </div>
+
+        <!-- Mode 1: Ask AI Panel -->
+        <div class="ai-mode-panel" data-mode="ask" style="display:block;">
+          <!-- B. Question Input Interface -->
+          <section class="ai-question-card" aria-label="Inquiry Input">
+            <label for="aiQuestionInput">Ask a Customer Intelligence Question</label>
+            <div class="ai-textarea-wrapper">
+              <textarea
+                id="aiQuestionInput"
+                class="ai-textarea"
+                placeholder="e.g., What are the main customer complaints about product quality?"
+                maxlength="500"
+                rows="3"
+              ></textarea>
+            </div>
+
+            <div class="ai-textarea-footer">
+              <span id="aiCharCounter" class="ai-char-counter">0 / 500</span>
+              <div class="ai-question-actions">
+                <button type="button" class="btn btn-ghost" onclick="document.getElementById('aiQuestionInput').value=''; window.updateAiCharCounter();" style="padding:6px 12px; font-size:0.85rem;">
+                  Clear
+                </button>
+                <button type="button" id="aiSubmitBtn" class="btn btn-primary" onclick="window.askAi()">
+                  <span>✨</span> <span>Ask AI</span>
+                </button>
+              </div>
+            </div>
+            <span id="aiQuestionError" class="error-message" style="display:none;"></span>
+
+            <!-- Clickable Example Question Chips -->
+            <div class="ai-suggested-prompts">
+              <div class="ai-suggested-title">Example inquiries:</div>
+              <div class="ai-prompt-chips-grid">
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('What are the most common complaints about product quality?')">
+                  🔍 Product quality complaints
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('Why are customers unhappy with fitting?')">
+                  👗 Fitting &amp; sizing issues
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('Summarize positive and negative feedback about dresses.')">
+                  📊 Dress sentiment summary
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('Which product aspects need the most improvement?')">
+                  ⚠️ Aspects needing improvement
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('What are customers saying about material quality?')">
+                  🧵 Fabric &amp; material feedback
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('What issues appear most frequently in recent feedback?')">
+                  ⚡ Recent recurring problems
+                </button>
+                <button type="button" class="ai-prompt-chip" onclick="window.injectAiPrompt('What improvements should we prioritize based on negative reviews?')">
+                  🎯 High-priority fixes
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- C. Multi-Attribute Filter Controls -->
+          <section class="ai-filter-card" aria-label="Evidence Filters">
+            <div class="ai-filter-header">
+              <h4><span>🎯</span> <span>Target Evidence Filters (Optional)</span></h4>
+              <button type="button" class="btn btn-ghost" onclick="window.clearAllAiFilters()" style="padding:4px 10px; font-size:0.8rem;">
+                ↺ Reset Filters
+              </button>
+            </div>
+
+            <div class="ai-filter-grid">
+              <div class="ai-filter-item">
+                <label for="aiFilterProduct">Product Category</label>
+                <select id="aiFilterProduct">
+                  <option value="all">All Products</option>
+                  <option value="tops">Tops</option>
+                  <option value="jeans">Jeans</option>
+                  <option value="dress">Dress</option>
+                  <option value="jacket">Jacket</option>
+                  <option value="shoes">Shoes</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="aiFilterSentiment">Sentiment</label>
+                <select id="aiFilterSentiment">
+                  <option value="all">All Sentiments</option>
+                  <option value="Positive">Positive</option>
+                  <option value="Negative">Negative</option>
+                  <option value="Neutral">Neutral</option>
+                  <option value="Mixed">Mixed</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="aiFilterRating">Rating</label>
+                <select id="aiFilterRating">
+                  <option value="all">All Ratings</option>
+                  <option value="5">5 Stars ★★★★★</option>
+                  <option value="4">4 Stars ★★★★☆</option>
+                  <option value="3">3 Stars ★★★☆☆</option>
+                  <option value="2">2 Stars ★★☆☆☆</option>
+                  <option value="1">1 Star ★☆☆☆☆</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="aiFilterAspect">Fashion Aspect</label>
+                <select id="aiFilterAspect">
+                  <option value="all">All Aspects</option>
+                  <option value="Fitting">Fitting</option>
+                  <option value="Quality">Quality</option>
+                  <option value="Design">Design</option>
+                  <option value="Color">Color</option>
+                  <option value="Size">Size</option>
+                  <option value="Material">Material</option>
+                  <option value="Price">Price</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="aiFilterDateRange">Time Period</label>
+                <select id="aiFilterDateRange">
+                  <option value="all">All Time</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="90">Last 90 Days</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item" style="grid-column: span 2;">
+                <label>Custom Date Window (Optional)</label>
+                <div class="ai-custom-dates-box">
+                  <input type="date" id="aiFilterDateFrom" aria-label="Start Date" />
+                  <input type="date" id="aiFilterDateTo" aria-label="End Date" />
+                </div>
+              </div>
+            </div>
+
+            <div id="aiActiveFiltersBar" class="ai-active-filters-bar"></div>
+          </section>
+
+          <!-- D. AI Response & Evidence Area -->
+          <section id="aiResponseArea" class="ai-response-area" aria-live="polite">
+            <div class="ai-empty-state">
+              <div class="ai-empty-icon">💡</div>
+              <h3>Ready for Customer Intelligence</h3>
+              <p>
+                Select an example question above or type your own question to analyze customer reviews with Retrieval-Augmented Generation.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Mode 2: Product Comparison Panel -->
+        <div class="ai-mode-panel" data-mode="compare" style="display:none;">
+          <section class="ai-question-card" aria-label="Product Comparison Selector">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
+              <div>
+                <h3 style="font-size:1.1rem; font-weight:700; color:#0f172a; margin:0 0 4px 0;">Select Products to Compare</h3>
+                <p style="font-size:0.85rem; color:#64748b; margin:0;">
+                  Select 2 to 5 product categories to evaluate measured database performance and comparative AI intelligence.
+                </p>
+              </div>
+              <span id="compareSelectedCount" style="font-size:0.82rem; font-weight:600; background:#fce4ec; color:#c2185b; padding:4px 12px; border-radius:14px;">
+                2 of 5 selected
+              </span>
+            </div>
+
+            <div class="compare-product-chips-grid">
+              <button type="button" class="compare-product-chip" data-product="tops" onclick="window.toggleCompareProduct('tops')">
+                Tops
+              </button>
+              <button type="button" class="compare-product-chip active" data-product="jeans" onclick="window.toggleCompareProduct('jeans')">
+                Jeans
+              </button>
+              <button type="button" class="compare-product-chip active" data-product="dress" onclick="window.toggleCompareProduct('dress')">
+                Dress
+              </button>
+              <button type="button" class="compare-product-chip" data-product="jacket" onclick="window.toggleCompareProduct('jacket')">
+                Jacket
+              </button>
+              <button type="button" class="compare-product-chip" data-product="shoes" onclick="window.toggleCompareProduct('shoes')">
+                Shoes
+              </button>
+              <button type="button" class="compare-product-chip" data-product="accessories" onclick="window.toggleCompareProduct('accessories')">
+                Accessories
+              </button>
+              <button type="button" class="compare-product-chip" data-product="general" onclick="window.toggleCompareProduct('general')">
+                General
+              </button>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px; padding-top:14px; border-top:1px solid #f1f5f9; flex-wrap:wrap; gap:12px;">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <label for="compareFilterDateRange" style="font-size:0.85rem; font-weight:600; color:#475569; margin:0;">Time Period:</label>
+                <select id="compareFilterDateRange" style="padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:0.85rem; color:#334155;">
+                  <option value="all">All Time</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="90">Last 90 Days</option>
+                </select>
+              </div>
+
+              <button type="button" id="btnRunComparison" class="btn btn-primary" onclick="window.runProductComparison()">
+                <span>⚖️</span> <span>Run Product Comparison</span>
+              </button>
+            </div>
+          </section>
+
+          <section id="aiCompareResponseArea" class="ai-response-area" aria-live="polite">
+            <div class="ai-empty-state">
+              <div class="ai-empty-icon">⚖️</div>
+              <h3>Multi-Product Comparison Intelligence</h3>
+              <p>
+                Select 2 to 5 product categories above and click &ldquo;Run Product Comparison&rdquo; to benchmark customer satisfaction, recurring complaints, and positive themes.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <!-- Mode 3: Strategic AI Recommendations Panel -->
+        <div class="ai-mode-panel" data-mode="recommendations" style="display:none;">
+          <section class="ai-filter-card" aria-label="Recommendation Parameters">
+            <div class="ai-filter-header">
+              <div>
+                <h4 style="margin:0 0 4px 0;"><span>🎯</span> <span>Formulate Strategic Recommendations</span></h4>
+                <p style="font-size:0.83rem; color:#64748b; margin:0;">
+                  Generate prioritized, evidence-backed business actions synthesized from approved customer reviews.
+                </p>
+              </div>
+            </div>
+
+            <div class="ai-filter-grid" style="margin-top:14px;">
+              <div class="ai-filter-item">
+                <label for="recProductSelect">Target Product</label>
+                <select id="recProductSelect">
+                  <option value="all">All Products (Cross-Catalog)</option>
+                  <option value="tops">Tops</option>
+                  <option value="jeans">Jeans</option>
+                  <option value="dress">Dress</option>
+                  <option value="jacket">Jacket</option>
+                  <option value="shoes">Shoes</option>
+                  <option value="accessories">Accessories</option>
+                  <option value="general">General</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="recFocusSelect">Strategic Focus Area</label>
+                <select id="recFocusSelect">
+                  <option value="all">All Focus Areas</option>
+                  <option value="quality">Product Quality &amp; Craftsmanship</option>
+                  <option value="fitting">Fitting &amp; Sizing Accuracy</option>
+                  <option value="material">Material &amp; Fabric Durability</option>
+                  <option value="design">Design &amp; Visual Appeal</option>
+                  <option value="returns">Returns &amp; Sizing Reductions</option>
+                </select>
+              </div>
+
+              <div class="ai-filter-item">
+                <label for="recDateRangeSelect">Time Period</label>
+                <select id="recDateRangeSelect">
+                  <option value="all">All Time</option>
+                  <option value="7">Last 7 Days</option>
+                  <option value="30">Last 30 Days</option>
+                  <option value="90">Last 90 Days</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:16px; padding-top:12px; border-top:1px solid #f1f5f9;">
+              <button type="button" id="btnRunRecommendations" class="btn btn-primary" onclick="window.runAiRecommendations()">
+                <span>🎯</span> <span>Generate Strategic Recommendations</span>
+              </button>
+            </div>
+          </section>
+
+          <section id="aiRecommendationsResponseArea" class="ai-response-area" aria-live="polite">
+            <div class="ai-empty-state">
+              <div class="ai-empty-icon">🎯</div>
+              <h3>Strategic Recommendations Engine</h3>
+              <p>
+                Select a product category and strategic focus area above, then click &ldquo;Generate Strategic Recommendations&rdquo; to formulate evidence-based action items.
+              </p>
+            </div>
+          </section>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-container">
+      <div>
+        <h2>StyleFeedback</h2>
+        <p>Fashion feedback intelligence platform empowering brands with real customer insights.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="feedback.html">Feedback</a></li>
+          <li><a href="product.html">Fashion Insights</a></li>
+          <li><a href="admin.html">Admin Panel</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Security &amp; Privacy</h4>
+        <p style="font-size:0.85rem; color:#94a3b8;">
+          All customer reviews analyzed by the AI engine are strictly sanitized. Customer PII and confidential information are never transmitted to LLM providers.
+        </p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 StyleFeedback Intelligence. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    window.handleAdminLogout = function () {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminUser");
+      localStorage.removeItem("isAdminLoggedIn");
+      window.location.href = "admin-login.html";
+    };
+  </script>
+  <script src="js/ai-insights.js"></script>
+</body>
+</html>

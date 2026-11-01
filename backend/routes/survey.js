@@ -1,10 +1,10 @@
-
 const express = require('express');
 const router = express.Router();
 const Survey = require('../models/Survey');
+const { surveyLimiter } = require('../middleware/rateLimiter');
 
-// POST /api/survey
-router.post('/', async (req, res) => {
+// POST /api/survey - Rate-limited public survey submission
+router.post('/', surveyLimiter, async (req, res) => {
     try {
         const newSurvey = new Survey(req.body);
         await newSurvey.save();
